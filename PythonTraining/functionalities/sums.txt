@@ -1,0 +1,3 @@
+{'file_name': 'C:\\Users\\Arthur\\Desktop\\INFORMATIQUE\\PYTHON\\integers\\integer1.txt', 'sum': 77}
+{'file_name': 'C:\\Users\\Arthur\\Desktop\\INFORMATIQUE\\PYTHON\\integers\\integer2.txt', 'sum': 203}
+{'file_name': 'C:\\Users\\Arthur\\Desktop\\INFORMATIQUE\\PYTHON\\integers\\integer3.txt', 'sum': 337}
