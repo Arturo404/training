@@ -8,36 +8,81 @@ class Node:
         self.height = 0
 
     def deleteNode(self):
+        """
+        Delete a node while also deleting in from MongoDB
+        Arguments:
+            self: a Node object
+        Returns:
+            Nothing
+        """
         delete_query = { "treasure": self.id }
-        bst_col.delete_one(delete_query)
+        try:
+            bst_col.delete_one(delete_query)
+        except Exception as err:
+            raise err
 
         del(self)
 
     def __str__(self):
-        left = None if self.left == None else self.left.id
-        right = None if self.right == None else self.right.id
+        left = None if not self.left else self.left.id
+        right = None if not self.right else self.right.id
         return f"Node ID: {self.id}, left: {left}, right: {right}, height: {self.height}"
     
     def updateHeight(self):
-        left_height = -1 if self.left == None else self.left.height
-        right_height = -1 if self.right == None else self.right.height
+        """
+        Update a node's height
+        Arguments:
+            self: a Node object
+        Returns:
+            Nothing
+        """
+        left_height = -1 if not self.left else self.left.height
+        right_height = -1 if not self.right else self.right.height
         self.height = max(left_height, right_height)+1
 
 
     def isLeaf(self):
-        return self.left == None and self.right == None
+        """
+        Determine if a node is a leaf in its current tree
+        Arguments:
+            self: a Node object
+        Returns:
+            True - node is leaf, False otherwise
+        """
+        return not self.left and not self.right
     
     def hasOneSon(self):
-        return (self.left == None and self.right != None) or (self.left != None and self.right == None)
+        """
+        Determine if a node has exactly one son in its current tree
+        Arguments:
+            self: a Node object
+        Returns:
+            True - node has exactly one son, False otherwise
+        """
+        return (not self.left and self.right is not None) or (self.left is not None and not self.right)
     
     def findOneSon(self):
-        return self.left if self.left != None else self.right
+        """
+        Find and return the only son of a node
+        Arguments:
+            self: a Node object
+        Returns:
+            The Node object corresponding to the self only son
+        """
+        return self.left if self.left is not None else self.right
     
     def successor(self):
+        """
+        Find and return the successor of a node in its current tree
+        Arguments:
+            self: a Node object
+        Returns:
+            The Node object corresponding to the self successor in its current tree
+        """
         parent_node = self
         curr_node = self.right
         side = "right"
-        while(curr_node.left != None):
+        while(curr_node.left is not None):
             parent_node = curr_node
             curr_node = curr_node.left
             side = "left"
@@ -45,38 +90,87 @@ class Node:
         return curr_node, parent_node, side
 
     def to_dict(self):
-        left_treasure = None if self.left == None else self.left.id
-        right_treasure = None if self.right == None else self.right.id
+        """
+        Create a JSON representation of the given node subtree
+        Arguments:
+            self: a Node object
+        Returns:
+            A JSON representation of the given node subtree
+        """
+        left_treasure = None if not self.left else self.left.id
+        right_treasure = None if not self.right else self.right.id
         return {"treasure": self.id, "left": left_treasure, "right": right_treasure}
     
     def addNodeToMongo(self):
-        bst_col.insert_one(self.to_dict())
+        """
+        Insert a node's information to MongoDB
+        Arguments:
+            self: a Node object
+        Returns:
+            Nothing
+        """
+        try:
+            bst_col.insert_one(self.to_dict())
+        except Exception as err:
+            raise err
 
-    #helper function: update value of a treasure and update mongoDB accordingly
+
     def updateTreasure(self, new_treasure):
+        """
+        Update the id (treasure) of the given node while updating the change in MongoDB
+        Arguments:
+            self: a Node object
+            new_treasure: a new id for this node (float)
+        Returns:
+            Nothing
+        """
         myquery = { "treasure": self.id }
         newvalues = { "$set": { "treasure": new_treasure } }
-        bst_col.update_one(myquery, newvalues)
+
+        try:
+            bst_col.update_one(myquery, newvalues)
+        except Exception as err:
+            raise err
 
         self.id = new_treasure
         
     #helper function: update connection between parent node and son
     #update corresponding node in mongoDB
     def connectAndUpdate(self, node, side):
-        if(side == "left"): self.left = node
+        """
+        Connect a node to an other as its new son on the desired side
+        Arguments:
+            self: a Node object
+            node: a Node object to connect as a son
+            side: the side to connect (either "left" or "right")
+        Returns:
+            Nothing
+        """
+        if side == "left": self.left = node
         else: self.right = node
 
-        connected_treasure = None if node == None else node.id
+        connected_treasure = None if not node else node.id
 
         #update mongodb
         myquery = { "treasure": self.id }
         newvalues = { "$set": { side: connected_treasure } }
-        bst_col.update_one(myquery, newvalues)
+
+        try:
+            bst_col.update_one(myquery, newvalues)
+        except Exception as err:
+            raise err
 
     
     def balance_factor(self):
-        left_height = -1 if self.left == None else self.left.height
-        right_height = -1 if self.right == None else self.right.height
+        """
+        Computer the given node's balance factor.
+        Arguments:
+            self: a Node object
+        Returns:
+            The given node's balance factor.
+        """
+        left_height = -1 if not self.left else self.left.height
+        right_height = -1 if not self.right else self.right.height
 
         return (left_height-right_height)
 
@@ -89,9 +183,6 @@ class Node:
         A = self.left
         A_l = A.left
         A_r = A.right
-
-        #reference height
-        ref_height = -1 if B_r == None else B_r.height
 
         #balancing and height update
         B.connectAndUpdate(A_r, "left")
@@ -114,9 +205,6 @@ class Node:
         B = A.right
         B_l = B.left
         B_r = B.right
-
-        #reference height
-        ref_height = -1 if A_l == None else A_l.height
 
         #balancing and height update
         C.connectAndUpdate(B_r, "left")
@@ -141,9 +229,6 @@ class Node:
         A_l = A.left
         A_r = A.right
 
-        #reference height
-        ref_height = -1 if B_l == None else B_l.height
-
         #balancing and height update
         B.connectAndUpdate(A_l, "right")
         B.updateHeight()
@@ -166,9 +251,6 @@ class Node:
         B_l = B.left
         B_r = B.right
 
-        #reference height
-        ref_height = -1 if C_l == None else C_l.height
-
         #balancing and height update
         C.connectAndUpdate(B_l, "right")
         C.updateHeight()
@@ -184,6 +266,13 @@ class Node:
 
 
     def balance(self):
+        """
+        Perform the correct rotation to the given node's subtree to balance it
+        Arguments:
+            self: a Node object
+        Returns:
+            Nothing
+        """
         if(self.balance_factor() == 2):
             if(self.left.balance_factor() == -1):
                 return self.balance_LR()
@@ -196,80 +285,117 @@ class Node:
                 return self.balance_RR()
     
     def in_order(self):
-        if self.left != None: yield from self.left.in_order()
+        if self.left is not None: yield from self.left.in_order()
         yield self.id
-        if self.right != None: yield from self.right.in_order()
+        if self.right is not None: yield from self.right.in_order()
 
     def pre_order(self):
         yield self.id
-        if self.left != None: yield from self.left.pre_order()
-        if self.right != None: yield from self.right.pre_order()
+        if self.left is not None: yield from self.left.pre_order()
+        if self.right is not None: yield from self.right.pre_order()
 
     def post_order(self):
-        if self.left != None: yield from self.left.post_order()
-        if self.right != None: yield from self.right.post_order()
+        if self.left is not None: yield from self.left.post_order()
+        if self.right is not None: yield from self.right.post_order()
         yield self.id
 
-    #helper function: find max value in subtree
     def max(self):
-        if self.left == None:
-            if self.right == None:
+        """
+        Find max value in the given node's subtree
+        Arguments:
+            self: a Node object
+        Returns:
+            The max value in the given node's subtree.
+        """
+        if not self.left:
+            if not self.right:
                 return self.id
             else:
                 return max(self.id, self.right.max())
         else:
-            if self.right == None:
+            if not self.right:
                 return max(self.id, self.left.max())
             else:
                 return max(self.id, self.left.max(), self.right.max())
     
     #helper function: find min value in subtree
     def min(self):
-        if self.left == None:
-            if self.right == None:
+        """
+        Find min value in the given node's subtree
+        Arguments:
+            self: a Node object
+        Returns:
+            The min value in the given node's subtree.
+        """
+        if not self.left:
+            if not self.right:
                 return self.id
             else:
                 return min(self.id, self.right.max())
         else:
-            if self.right == None:
+            if not self.right:
                 return min(self.id, self.left.max())
             else:
                 return min(self.id, self.left.max(), self.right.max())
     
-    #helper function: return True if subtree is a valid binary search tree
     def validBinary(self):
-        if self.left == None:
-            if self.right == None:
+        """
+        Check if subtree is a valid BST
+        Arguments:
+            self: a Node object
+        Returns:
+            True - subtree is a valid BST, False otherwise
+        """
+        if not self.left:
+            if not self.right:
                 return True
             else:
                 return (self.id < self.right.min()) and self.right.validBinary()
         else:
-            if self.right == None:
+            if not self.right:
                 return (self.left.max() < self.id) and self.left.validBinary()
             else:
                 return (self.id < self.right.min()) and (self.left.max() < self.id) and self.right.validBinary() and self.left.validBinary()
     
-    #helper function: return True if subtree is balanced
     def validAVL(self):
-        if self.left == None:
-            if self.right == None:
+        """
+        Check if subtree is balanced according to AVL rules
+        Arguments:
+            self: a Node object
+        Returns:
+            True - subtree is balanced, False otherwise
+        """
+        if not self.left:
+            if not self.right:
                 return True
             else:
                 return abs(self.balance_factor()) < 2 and self.right.validAVL()
         else:
-            if self.right == None:
+            if not self.right:
                 return abs(self.balance_factor()) < 2 and self.left.validAVL()
             else:
                 return abs(self.balance_factor()) < 2 and self.left.validAVL() and self.right.validAVL()
 
-    #helper function: return True if subtree is valid balanced BST
     def valid(self):
+        """
+        Check if subtree is balanced and BST
+        Arguments:
+            self: a Node object
+        Returns:
+            True - subtree is valid, False otherwise
+        """
         return self.validBinary() and self.validAVL()
     
-    #helper function: generate a visualization of corresponding subtree in JSON
     def toJson(self):
-        left_json = None if self.left == None else self.left.toJson()
-        right_json = None if self.right == None else self.right.toJson()
+        """
+        Create a JSON representation of the given node's subtree
+        Arguments:
+            self: a Node object
+        Returns:
+            A JSON representation of the given node's subtree
+        """
+        left_json = None if not self.left else self.left.toJson()
+        right_json = None if not self.right else self.right.toJson()
         return {"treasure": self.id, "left":left_json, "right":right_json}
 
 
@@ -277,9 +403,9 @@ class Node:
         
             
 
-
+"""
 def print_inorder(node):
-    if(node == None):
+    if not node:
         return
     else:
         print_inorder(node.left)
@@ -287,9 +413,10 @@ def print_inorder(node):
         print_inorder(node.right)
     
 def generator_preorder(node):
-    if(node == None):
+    if not node:
         pass
     else:
         yield node
         yield from generator_preorder(node.left)
         yield from generator_preorder(node.right)
+"""
