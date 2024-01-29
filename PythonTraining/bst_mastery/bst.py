@@ -3,6 +3,7 @@ from node import bst_col
 from queue import LifoQueue
 from bson import json_util
 import bst_exceptions
+from typing import Generator
 
 class BST:
     def __init__(self) -> None:
@@ -14,10 +15,10 @@ class BST:
         except Exception as err:
             raise err
 
-    def __str__(self):
+    def __str__(self) -> None:
         return json_util.dumps(self.visualize(), indent = 4)
 
-    def updateRoot(self, new_root):
+    def updateRoot(self, new_root: Node) -> None:
         """
         update the BST root and update it in mongoDB as well
         Arguments:
@@ -34,7 +35,7 @@ class BST:
         newvalues = { "$set": { "root": new_root_id } }
         bst_col.update_one(myquery, newvalues)
  
-    def switchNodes(self, node1, node2):
+    def switchNodes(self, node1: Node, node2: Node) -> None:
         """
         switch two nodes inside the BST
         Arguments:
@@ -48,8 +49,8 @@ class BST:
         node1.updateTreasure(node2.id)
         node2.updateTreasure(treasure1)
 
-    #helper function: 
-    def getPathToNode(self, treasure):
+
+    def getPathToNode(self, treasure: float) -> LifoQueue:
         """
         get the path to a specific node saved in a stack
         Arguments:
@@ -65,11 +66,13 @@ class BST:
                 return path
             elif treasure < curr_node.id:
                 path.put((curr_node,"left"))
+                curr_node = curr_node.left
             else:
                 path.put((curr_node,"right"))
+                curr_node = curr_node.right
  
 
-    def insert(self, treasure):
+    def insert(self, treasure: float) -> None:
         """
         Insert a new node with id treasure in the BST
         Arguments:
@@ -138,7 +141,7 @@ class BST:
 
     
 
-    def delete(self, treasure):
+    def delete(self, treasure: float) -> None:
         """
         Delete a node with id treasure in the BST
         Arguments:
@@ -220,7 +223,7 @@ class BST:
             raise err
 
 
-    def search(self, treasure):
+    def search(self, treasure: float) -> bool:
         """
         Find if a node with id treasure exists in the BST
         Arguments:
@@ -240,7 +243,7 @@ class BST:
         
         return False
 
-    def in_order(self):
+    def in_order(self) -> Generator[float, None, None]:
         """
         Generator of nodes ids corresponding to in order traversal of the BST
         Arguments:
@@ -249,7 +252,8 @@ class BST:
         if not self.root: return
         yield from self.root.in_order()
 
-    def pre_order(self):
+
+    def pre_order(self) -> Generator[float, None, None]:
         """
         Generator of nodes ids corresponding to pre-order traversal of the BST
         Arguments:
@@ -258,7 +262,8 @@ class BST:
         if not self.root: return
         yield from self.root.pre_order()
 
-    def post_order(self):
+
+    def post_order(self) -> Generator[float, None, None]:
         """
         Generator of nodes ids corresponding to post-order traversal of the BST
         Arguments:
@@ -267,7 +272,7 @@ class BST:
         if not self.root: return
         yield from self.root.post_order()
 
-    def validate(self):
+    def validate(self) -> bool:
         """
         Check if the BST is in a valid state
         Arguments:
@@ -278,7 +283,7 @@ class BST:
         if not self.root: return True
         return self.root.valid()
     
-    def visualize(self):
+    def visualize(self) -> dict:
         """
         Create a visualization of the BST and upload it to MongoDB
         Arguments:

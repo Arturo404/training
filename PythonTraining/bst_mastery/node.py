@@ -1,13 +1,16 @@
+from __future__ import annotations
 from mongo_collection import bst_col
+from typing import Generator
 
 class Node:
-    def __init__(self, id) -> None:
+    def __init__(self, id: float):
         self.id = id
         self.left = None
         self.right = None
         self.height = 0
 
-    def deleteNode(self):
+
+    def deleteNode(self) -> None:
         """
         Delete a node while also deleting in from MongoDB
         Arguments:
@@ -23,12 +26,13 @@ class Node:
 
         del(self)
 
-    def __str__(self):
+
+    def __str__(self) -> str:
         left = None if not self.left else self.left.id
         right = None if not self.right else self.right.id
         return f"Node ID: {self.id}, left: {left}, right: {right}, height: {self.height}"
     
-    def updateHeight(self):
+    def updateHeight(self) -> None:
         """
         Update a node's height
         Arguments:
@@ -41,7 +45,7 @@ class Node:
         self.height = max(left_height, right_height)+1
 
 
-    def isLeaf(self):
+    def isLeaf(self) -> bool:
         """
         Determine if a node is a leaf in its current tree
         Arguments:
@@ -51,7 +55,7 @@ class Node:
         """
         return not self.left and not self.right
     
-    def hasOneSon(self):
+    def hasOneSon(self) -> bool:
         """
         Determine if a node has exactly one son in its current tree
         Arguments:
@@ -61,7 +65,7 @@ class Node:
         """
         return (not self.left and self.right is not None) or (self.left is not None and not self.right)
     
-    def findOneSon(self):
+    def findOneSon(self) -> Node:
         """
         Find and return the only son of a node
         Arguments:
@@ -71,7 +75,7 @@ class Node:
         """
         return self.left if self.left is not None else self.right
     
-    def successor(self):
+    def successor(self) -> Node:
         """
         Find and return the successor of a node in its current tree
         Arguments:
@@ -89,7 +93,7 @@ class Node:
 
         return curr_node, parent_node, side
 
-    def to_dict(self):
+    def to_dict(self) -> dict:
         """
         Create a JSON representation of the given node subtree
         Arguments:
@@ -101,7 +105,7 @@ class Node:
         right_treasure = None if not self.right else self.right.id
         return {"treasure": self.id, "left": left_treasure, "right": right_treasure}
     
-    def addNodeToMongo(self):
+    def addNodeToMongo(self) -> None:
         """
         Insert a node's information to MongoDB
         Arguments:
@@ -115,7 +119,7 @@ class Node:
             raise err
 
 
-    def updateTreasure(self, new_treasure):
+    def updateTreasure(self, new_treasure: float) -> None:
         """
         Update the id (treasure) of the given node while updating the change in MongoDB
         Arguments:
@@ -134,9 +138,8 @@ class Node:
 
         self.id = new_treasure
         
-    #helper function: update connection between parent node and son
-    #update corresponding node in mongoDB
-    def connectAndUpdate(self, node, side):
+
+    def connectAndUpdate(self, node: Node, side: str) -> None:
         """
         Connect a node to an other as its new son on the desired side
         Arguments:
@@ -161,7 +164,7 @@ class Node:
             raise err
 
     
-    def balance_factor(self):
+    def balance_factor(self) -> int:
         """
         Computer the given node's balance factor.
         Arguments:
@@ -175,7 +178,7 @@ class Node:
         return (left_height-right_height)
 
 
-    def balance_LL(self):
+    def balance_LL(self) -> None:
         #node naming
         B = self
         B_r = B.right
@@ -194,7 +197,7 @@ class Node:
         return A
 
 
-    def balance_LR(self):
+    def balance_LR(self) -> None:
         #node naming
         C = self
         C_r = C.right
@@ -220,7 +223,7 @@ class Node:
         return B
 
 
-    def balance_RR(self):
+    def balance_RR(self) -> None:
         #node naming
         B = self
         B_l = B.left
@@ -239,7 +242,7 @@ class Node:
         return A
 
 
-    def balance_RL(self):
+    def balance_RL(self) -> None:
         #node naming
         C = self
         C_l = C.left
@@ -265,7 +268,7 @@ class Node:
         return B
 
 
-    def balance(self):
+    def balance(self) -> None:
         """
         Perform the correct rotation to the given node's subtree to balance it
         Arguments:
@@ -284,22 +287,22 @@ class Node:
             else:
                 return self.balance_RR()
     
-    def in_order(self):
+    def in_order(self) -> Generator[float, None, None]:
         if self.left is not None: yield from self.left.in_order()
         yield self.id
         if self.right is not None: yield from self.right.in_order()
 
-    def pre_order(self):
+    def pre_order(self) -> Generator[float, None, None]:
         yield self.id
         if self.left is not None: yield from self.left.pre_order()
         if self.right is not None: yield from self.right.pre_order()
 
-    def post_order(self):
+    def post_order(self) -> Generator[float, None, None]:
         if self.left is not None: yield from self.left.post_order()
         if self.right is not None: yield from self.right.post_order()
         yield self.id
 
-    def max(self):
+    def max(self) -> float:
         """
         Find max value in the given node's subtree
         Arguments:
@@ -318,8 +321,8 @@ class Node:
             else:
                 return max(self.id, self.left.max(), self.right.max())
     
-    #helper function: find min value in subtree
-    def min(self):
+
+    def min(self) -> float:
         """
         Find min value in the given node's subtree
         Arguments:
@@ -338,7 +341,7 @@ class Node:
             else:
                 return min(self.id, self.left.max(), self.right.max())
     
-    def validBinary(self):
+    def validBinary(self) -> bool:
         """
         Check if subtree is a valid BST
         Arguments:
@@ -357,7 +360,7 @@ class Node:
             else:
                 return (self.id < self.right.min()) and (self.left.max() < self.id) and self.right.validBinary() and self.left.validBinary()
     
-    def validAVL(self):
+    def validAVL(self) -> bool:
         """
         Check if subtree is balanced according to AVL rules
         Arguments:
@@ -376,7 +379,7 @@ class Node:
             else:
                 return abs(self.balance_factor()) < 2 and self.left.validAVL() and self.right.validAVL()
 
-    def valid(self):
+    def valid(self) -> bool:
         """
         Check if subtree is balanced and BST
         Arguments:
@@ -386,7 +389,7 @@ class Node:
         """
         return self.validBinary() and self.validAVL()
     
-    def toJson(self):
+    def toJson(self) -> dict:
         """
         Create a JSON representation of the given node's subtree
         Arguments:
@@ -397,26 +400,3 @@ class Node:
         left_json = None if not self.left else self.left.toJson()
         right_json = None if not self.right else self.right.toJson()
         return {"treasure": self.id, "left":left_json, "right":right_json}
-
-
-
-        
-            
-
-"""
-def print_inorder(node):
-    if not node:
-        return
-    else:
-        print_inorder(node.left)
-        print(node)
-        print_inorder(node.right)
-    
-def generator_preorder(node):
-    if not node:
-        pass
-    else:
-        yield node
-        yield from generator_preorder(node.left)
-        yield from generator_preorder(node.right)
-"""

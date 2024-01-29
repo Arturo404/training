@@ -1,7 +1,7 @@
 from flask import Flask, request, Response, json
 from flask_api import status
 
-from bst import BST, bst_col, bst_exceptions
+from bst import BST, bst_exceptions
 
 app = Flask(__name__)
 
