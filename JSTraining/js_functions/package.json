@@ -1,0 +1,27 @@
+{
+  "name": "js_functions",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "vowel": "node filter/vowel.js",
+    "category": "node filter/category.js",
+    "date": "node filter/date.js",
+    "initial": "node map/initial.js",
+    "discount": "node map/discount.js",
+    "label": "node map/label.js",
+    "selective_discount": "node map_and_filter/selective_discount.js",
+    "duration": "node map_and_filter/duration.js",
+    "unique_string": "node map_and_filter/unique_string.js",
+    "young": "node map_and_filter/young.js",
+    "positive_squared": "node map_and_filter/positive_squared.js",
+    "voters": "node reduce/voters.js",
+    "wishlist": "node reduce/wishlist.js",
+    "flatten_arrays": "node reduce/flatten_arrays.js",
+    "vote_results": "node reduce/vote_results.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
