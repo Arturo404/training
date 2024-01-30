@@ -1,7 +1,7 @@
 from pymongo.mongo_client import MongoClient
 from pymongo.server_api import ServerApi
 from pymongo import errors
-
+import logging
 
 uri = "mongodb+srv://arthursouss:V9pkCYiNk6hpM3lc@cluster0.ovlc9ua.mongodb.net/?retryWrites=true&w=majority"
 
@@ -21,6 +21,7 @@ try:
 
     # print the version of MongoDB server if connection successful
     print ("server version:", client.server_info()["version"])
+    logging.info(f"Connection successful to mongoDB")
 except errors.ServerSelectionTimeoutError as err:
     # set the client instance to 'None' if exception
     client = None

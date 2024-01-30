@@ -4,6 +4,7 @@ from queue import LifoQueue
 from bson import json_util
 import bst_exceptions
 from typing import Generator
+import logging
 
 class BST:
     def __init__(self) -> None:
@@ -12,6 +13,7 @@ class BST:
         try:
             bst_col.delete_many({})
             bst_col.insert_one({"root": None})
+            logging.info("New BST created")
         except Exception as err:
             raise err
 
@@ -27,13 +29,17 @@ class BST:
         Returns:
             Nothing
         """
-        self.root = new_root
-
+        current_root_id = None if not self.root else self.root.id
         new_root_id = None if not new_root else new_root.id
+        logging.info(f"Updating root from treasure {current_root_id} to {new_root_id}")
+        
+        self.root = new_root
 
         myquery = { "root" : {"$exists":True} } 
         newvalues = { "$set": { "root": new_root_id } }
         bst_col.update_one(myquery, newvalues)
+        
+
  
     def switchNodes(self, node1: Node, node2: Node) -> None:
         """
@@ -45,6 +51,7 @@ class BST:
         Returns:
             Nothing
         """
+        logging.info(f"Switching nodes with treasures {node1.id} and {node2.id}")
         treasure1 = node1.id
         node1.updateTreasure(node2.id)
         node2.updateTreasure(treasure1)
@@ -84,6 +91,7 @@ class BST:
         try:
             #check if treasure already exist in BST, if yes abort
             if self.search(treasure):
+                logging.info(f"Node with treasure {treasure} to insert already exists in the tree!")
                 raise bst_exceptions.AlreadyExistException()
             
 
@@ -136,6 +144,7 @@ class BST:
                             curr_node = parent_node
                 
                 self.updateRoot(curr_node)
+            logging.info(f"New node inserted with treasure {treasure}")
         except Exception as err:
             raise err
 
@@ -159,6 +168,7 @@ class BST:
             #find node and delete it according to its situation in BST
             while(True):
                 if not curr_node:
+                    logging.info(f"Node with treasure {treasure} to delete not found!")
                     raise bst_exceptions.NotExistException()
                 if treasure == curr_node.id:
                     if curr_node.isLeaf():
@@ -219,6 +229,7 @@ class BST:
                             return
                         else:
                             correctedNode = parent_node
+            logging.info(f"Node deleted with treasure {treasure}")
         except Exception as err:
             raise err
 
@@ -235,12 +246,14 @@ class BST:
         curr_node = self.root
         while(curr_node is not None):
             if treasure == curr_node.id:
+                logging.info(f"Node with treasure {treasure} found!")
                 return True
             if treasure < curr_node.id:
                 curr_node = curr_node.left
             else:
                 curr_node = curr_node.right
         
+        logging.info(f"Node with treasure {treasure} NOT found!")
         return False
 
     def in_order(self) -> Generator[float, None, None]:
