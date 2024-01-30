@@ -1,6 +1,7 @@
 from __future__ import annotations
 from mongo_collection import bst_col
 from typing import Generator
+from side import Side
 
 class Node:
     def __init__(self, id: float):
@@ -75,7 +76,7 @@ class Node:
         """
         return self.left if self.left is not None else self.right
     
-    def successor(self) -> Node:
+    def successor(self) -> (Node, Node, Side):
         """
         Find and return the successor of a node in its current tree
         Arguments:
@@ -85,11 +86,11 @@ class Node:
         """
         parent_node = self
         curr_node = self.right
-        side = "right"
+        side = Side.RIGHT
         while(curr_node.left is not None):
             parent_node = curr_node
             curr_node = curr_node.left
-            side = "left"
+            side = Side.LEFT
 
         return curr_node, parent_node, side
 
@@ -139,24 +140,26 @@ class Node:
         self.id = new_treasure
         
 
-    def connectAndUpdate(self, node: Node, side: str) -> None:
+    def connectAndUpdate(self, node: Node, side: Side) -> None:
         """
         Connect a node to an other as its new son on the desired side
         Arguments:
             self: a Node object
             node: a Node object to connect as a son
-            side: the side to connect (either "left" or "right")
+            side: the side to connect (either Side.LEFT or Side.RIGHT)
         Returns:
             Nothing
         """
-        if side == "left": self.left = node
+        if side == Side.LEFT: self.left = node
         else: self.right = node
+
+        side_key = "left" if side==Side.LEFT else "right"
 
         connected_treasure = None if not node else node.id
 
         #update mongodb
         myquery = { "treasure": self.id }
-        newvalues = { "$set": { side: connected_treasure } }
+        newvalues = { "$set": { side_key: connected_treasure } }
 
         try:
             bst_col.update_one(myquery, newvalues)
@@ -188,10 +191,10 @@ class Node:
         A_r = A.right
 
         #balancing and height update
-        B.connectAndUpdate(A_r, "left")
+        B.connectAndUpdate(A_r, Side.LEFT)
         B.updateHeight()
 
-        A.connectAndUpdate(B, "right")
+        A.connectAndUpdate(B, Side.RIGHT)
         A.updateHeight()
 
         return A
@@ -210,14 +213,14 @@ class Node:
         B_r = B.right
 
         #balancing and height update
-        C.connectAndUpdate(B_r, "left")
+        C.connectAndUpdate(B_r, Side.LEFT)
         C.updateHeight()
 
-        A.connectAndUpdate(B_l, "right")
+        A.connectAndUpdate(B_l, Side.RIGHT)
         A.updateHeight()
 
-        B.connectAndUpdate(A, "left")
-        B.connectAndUpdate(C, "right")
+        B.connectAndUpdate(A, Side.LEFT)
+        B.connectAndUpdate(C, Side.RIGHT)
         B.updateHeight()
 
         return B
@@ -233,10 +236,10 @@ class Node:
         A_r = A.right
 
         #balancing and height update
-        B.connectAndUpdate(A_l, "right")
+        B.connectAndUpdate(A_l, Side.RIGHT)
         B.updateHeight()
 
-        A.connectAndUpdate(B, "left")
+        A.connectAndUpdate(B, Side.LEFT)
         A.updateHeight()
 
         return A
@@ -255,14 +258,14 @@ class Node:
         B_r = B.right
 
         #balancing and height update
-        C.connectAndUpdate(B_l, "right")
+        C.connectAndUpdate(B_l, Side.RIGHT)
         C.updateHeight()
 
-        A.connectAndUpdate(B_r, "left")
+        A.connectAndUpdate(B_r, Side.LEFT)
         A.updateHeight()
 
-        B.connectAndUpdate(C, "left")
-        B.connectAndUpdate(A, "right")
+        B.connectAndUpdate(C, Side.LEFT)
+        B.connectAndUpdate(A, Side.RIGHT)
         B.updateHeight()
 
         return B

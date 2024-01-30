@@ -5,6 +5,7 @@ from bson import json_util
 import bst_exceptions
 from typing import Generator
 import logging
+from side import Side
 
 class BST:
     def __init__(self) -> None:
@@ -72,10 +73,10 @@ class BST:
             if treasure == curr_node.id:
                 return path
             elif treasure < curr_node.id:
-                path.put((curr_node,"left"))
+                path.put((curr_node,Side.LEFT))
                 curr_node = curr_node.left
             else:
-                path.put((curr_node,"right"))
+                path.put((curr_node,Side.RIGHT))
                 curr_node = curr_node.right
  
 
@@ -113,20 +114,20 @@ class BST:
                 #find correct place for new node and connect it to BST
                 while(True):
                     if node.id < curr_node.id:
-                        insertion_path.put((curr_node,"left"))
+                        insertion_path.put((curr_node,Side.LEFT))
                         if curr_node.left is not None:
                             curr_node = curr_node.left
                         else:
                             #connect to curr node and update
-                            curr_node.connectAndUpdate(node, "left")
+                            curr_node.connectAndUpdate(node, Side.LEFT)
                             break
                     else:
-                        insertion_path.put((curr_node,"right"))
+                        insertion_path.put((curr_node,Side.RIGHT))
                         if curr_node.right is not None:
                             curr_node = curr_node.right
                         else:
                             #connect to curr node and update
-                            curr_node.connectAndUpdate(node, "right")
+                            curr_node.connectAndUpdate(node, Side.RIGHT)
                             break
                 
                 #go up through insertion path to update heights and perform rotations
@@ -201,10 +202,10 @@ class BST:
                     break
                 else:
                     if treasure < curr_node.id:
-                        delete_path.put((curr_node, "left"))
+                        delete_path.put((curr_node, Side.LEFT))
                         curr_node = curr_node.left
                     else:
-                        delete_path.put((curr_node, "right"))
+                        delete_path.put((curr_node, Side.RIGHT))
                         curr_node = curr_node.right
             
             #go up deletion path to update heights and perform rotations if needed
