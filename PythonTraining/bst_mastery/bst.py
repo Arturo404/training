@@ -52,10 +52,11 @@ class BST:
         Returns:
             Nothing
         """
-        logging.info(f"Switching nodes with treasures {node1.id} and {node2.id}")
         treasure1 = node1.id
+        treasure2 = node2.id
         node1.updateTreasure(node2.id)
         node2.updateTreasure(treasure1)
+        logging.info(f"Switching nodes with treasures {treasure1} and {treasure2}")
 
 
     def getPathToNode(self, treasure: float) -> LifoQueue:

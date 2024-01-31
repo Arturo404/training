@@ -54,6 +54,7 @@ class Node:
         Returns:
             True - node is leaf, False otherwise
         """
+        return not(self.left or self.right)
         return not self.left and not self.right
     
     def hasOneSon(self) -> bool:
@@ -64,7 +65,7 @@ class Node:
         Returns:
             True - node has exactly one son, False otherwise
         """
-        return (not self.left and self.right is not None) or (self.left is not None and not self.right)
+        return (not self.left and self.right) or (self.left and not self.right)
     
     def findOneSon(self) -> Node:
         """
@@ -153,7 +154,7 @@ class Node:
         if side == Side.LEFT: self.left = node
         else: self.right = node
 
-        side_key = "left" if side==Side.LEFT else "right"
+        side_key = side.value
 
         connected_treasure = None if not node else node.id
 
@@ -337,12 +338,12 @@ class Node:
             if not self.right:
                 return self.id
             else:
-                return min(self.id, self.right.max())
+                return min(self.id, self.right.min())
         else:
             if not self.right:
-                return min(self.id, self.left.max())
+                return min(self.id, self.left.min())
             else:
-                return min(self.id, self.left.max(), self.right.max())
+                return min(self.id, self.left.min(), self.right.min())
     
     def validBinary(self) -> bool:
         """
