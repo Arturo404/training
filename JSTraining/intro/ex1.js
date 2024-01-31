@@ -1,53 +1,36 @@
-const fs = require("fs");
+import fs from "fs";
+import { filesData } from "./data.js";
+import Logger from "js-logger";
 
-const filesDirPath = "./created_files/"
+const filesDirPath = "./created_files/";
 
-const filesData = [
-    {
-        fileName: "number",
-        fileType: "txt",
-        fileData: 122
-    },
-    {
-        fileName: "func",
-        fileType: "js",
-        fileData: "console.log('Hello World!');"
-    },
-    {
-        fileName: "myname",
-        fileType: "txt",
-        fileData: "PSI Course"
-    },
-    {
-        fileName: "veryLongString",
-        fileType: "txt",
-        fileData: "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
-    }
-];
+Logger.useDefaults();
 
-function createFile(fileName, fileType, fileData) {
+async function createFile(fileName, fileType, fileData) {
     const fullFilePath = `${filesDirPath}${fileName}.${fileType}`;
     try {
-        fs.writeFile(fullFilePath, fileData.toString(), (err) => {
+        await fs.writeFile(fullFilePath, fileData.toString(), (err) => {
             if (err) throw err;
         });
     }
     catch(err) {
-        console.log(err.message)
+        Logger.error(err.message)
     }
 }
 
-function treatFileObject(value) {
+async function treatFileEntry(value) {
     const fileName = value.fileName;
     const fileType = value.fileType;
     const fileData = value.fileData;
 
-    createFile(fileName, fileType, fileData);
+    await createFile(fileName, fileType, fileData);
 }
 
 
-function fileCreator(filesData) {
-    filesData.forEach(treatFileObject); 
+async function fileCreator(filesData) {
+    for(const fileEntry of filesData) {
+        await treatFileEntry(fileEntry);
+    }
 }
 
 
