@@ -55,7 +55,6 @@ class Node:
             True - node is leaf, False otherwise
         """
         return not(self.left or self.right)
-        return not self.left and not self.right
     
     def hasOneSon(self) -> bool:
         """
