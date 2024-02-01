@@ -1,24 +1,38 @@
-const utils = require('./utils');
+import { getRandomInt } from './utils.js';
 
 function returnPromiseThatReturnPromise() {
     return new Promise((resolve)=>{
         setTimeout(()=>{
             resolve(new Promise((resolve)=>{
                 setTimeout(()=>{
-                    resolve(utils.getRandomInt(1,10));
+                    resolve(getRandomInt(1,10));
                 }, 10*1000);
             }));
         }, 5*1000);
     });
 }
 
-async function usePromise() {
-    const promise = await returnPromiseThatReturnPromise();
-    console.log(await promise);
+
+function usingThen() {
+    console.log("Using then: ");
+    returnPromiseThatReturnPromise().then((result)=>{console.log(result);});
 }
 
+async function usingAwait() {
+    console.log("Using await: ");
+    try {
+        const promise = await returnPromiseThatReturnPromise();
+        console.log(await promise);
+    }
+    catch(err) {
+        console.log(err.message);
+    }
+}
 
-returnPromiseThatReturnPromise().then((result)=>{console.log(result);});
-
-
-usePromise();
+const usingThen_o = true;
+if(usingThen_o) {
+    usingThen();
+}
+else {
+    usingAwait();
+}

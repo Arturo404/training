@@ -1,9 +1,9 @@
-const utils = require('./utils');
+import { getRandomInt } from './utils.js';
 
 async function returnAPromise() {
     return new Promise( (resolve)=>{
         setTimeout(()=>{
-            resolve(utils.getRandomInt(1,10));
+            resolve(getRandomInt(1,10));
         }, 3000);
     })
 }

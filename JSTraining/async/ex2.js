@@ -1,9 +1,9 @@
-const utils = require('./utils');
+import { getRandomInt } from './utils.js';
   
 async function returnAPromise() {
     return new Promise( (resolve, reject)=>{
         setTimeout(()=>{
-            const value = utils.getRandomInt(50,100);
+            const value = getRandomInt(50,100);
             if(value>85) reject(new Error("Number is too big, bigger than 85"));
             resolve(value);
         }, 3000);

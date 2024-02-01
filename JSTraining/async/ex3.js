@@ -1,9 +1,9 @@
-const utils = require('./utils');
+import { sumUntilNumber } from './utils.js';
 
 async function returnAPromise(num) {
     return new Promise( (resolve)=>{
         setTimeout(()=>{
-            resolve(utils.sumUntilNumber(num));
+            resolve(sumUntilNumber(num));
         }, 5000);
     });
 }
