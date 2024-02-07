@@ -1,123 +1,160 @@
-const readline = require('readline');
-const fs = require('fs');
-
-
+import * as readline from 'readline';
+import * as fs from 'fs';
+import Logger from 'js-logger';
 
 const caseFilesDirPath = "./case_files/"
 const streetNamesFileName = "street_names.txt"
 
 const streetNamesFilePath = caseFilesDirPath+streetNamesFileName
 
-function firstLetterToUpperCase(string) {
+const firstLetterToUpperCase = (string) => {
     return string.charAt(0).toUpperCase()+string.slice(1).toLowerCase();
 }
 
-
-try {
-    fs.readdir(caseFilesDirPath, function (err, files) {
-        if (err) {
-          console.error("Could not list the directory.", err);
-          process.exit(1);
-        }
-    
-        files.forEach(function (file) {
-            if(file.includes("Case")) {
-                fs.unlink(`${caseFilesDirPath}${file}`, (err) => {
-                    if (err) throw err;
-                }); 
+function deleteAllCaseFiles(caseFilesDirPath) {
+    try {
+        fs.readdir(caseFilesDirPath, function (err, files) {
+            if (err) {
+              Logger.error("Could not list the directory.", err);
+              throw err;
             }
-        });
-    
-    });
-}
-catch(err) {
-    console.log(`Error erasing case files: ${err.message}`)
-}
-
-try {
-    const rl = readline.createInterface({
-        input: fs.createReadStream(streetNamesFilePath)
-    });
-
-    rl.on('line', (line) => {
-
-        if(!line.includes("|")) return;
-        const lineComponents = line.split("|");
-        const caseName = lineComponents[0], streetName = lineComponents[1];
         
-        const streetNameComponents = streetName.split(" ");
-        let caseCorrectName = "";
-    
-        switch(caseName) {
-            case "camelCase":
-                for(let i=0; i<streetNameComponents.length; i++) {
-                    if(i==0) {
-                        caseCorrectName += streetNameComponents[i].toLowerCase();
-                    }
-                    else {
-                        caseCorrectName += firstLetterToUpperCase(streetNameComponents[i]);
-                    }
+            files.forEach(function (file) {
+                if(file.includes("Case")) {
+                    fs.unlink(`${caseFilesDirPath}${file}`, (err) => {
+                        if (err) {
+                            Logger.error(`Could not delete file ${file}`, err);
+                            throw err;
+                        }
+                    }); 
                 }
-                break;
-            case "pascalCase":
-                for(let i=0; i<streetNameComponents.length; i++) {
-                    caseCorrectName += firstLetterToUpperCase(streetNameComponents[i]);
-                }
-                break;
-            case "kebabCase":
-                for(let i=0; i<streetNameComponents.length; i++) {
-                    if(i==0) {
-                        caseCorrectName += streetNameComponents[i].toLowerCase();
-                    }
-                    else {
-                        caseCorrectName += "-"+streetNameComponents[i].toLowerCase();
-                    }
-                }
-                
-                break;
-            case "snakeCase":
-                for(let i=0; i<streetNameComponents.length; i++) {
-                    if(i==0) {
-                        caseCorrectName += streetNameComponents[i].toLowerCase();
-                    }
-                    else {
-                        caseCorrectName += "_"+streetNameComponents[i].toLowerCase();
-                    }
-                }
-                break;
-            case "constantCase":
-                for(let i=0; i<streetNameComponents.length; i++) {
-                    if(i==0) {
-                        caseCorrectName += streetNameComponents[i].toUpperCase();
-                    }
-                    else {
-                        caseCorrectName += "_"+streetNameComponents[i].toUpperCase();
-                    }
-                }
-                break;
-            case "pathCase":
-                for(let i=0; i<streetNameComponents.length; i++) {
-                    if(i==0) {
-                        caseCorrectName += firstLetterToUpperCase(streetNameComponents[i])
-                    }
-                    else {
-                        caseCorrectName += "/"+streetNameComponents[i].toLowerCase();
-                    }
-                }
-                break;
-            default:
-        } 
-    
-        const caseFilePath = `${caseFilesDirPath}${caseName}.txt`
-        fs.appendFile(caseFilePath, caseCorrectName+"\n", 'utf8', function(err) {
-            if (err) throw err;
+            });
+        
         });
-    });
+    }
+    catch(err) {
+        Logger.error(`Error erasing case files: ${err.message}`)
+        process.exit(1);
+    }
+}
+
+function toCamelCase(words) {
+    let caseResult = '';
+    for(let i=0; i<words.length; i++) {
+        if(i==0) {
+            caseResult += words[i].toLowerCase();
+        }
+        else {
+            caseResult += firstLetterToUpperCase(words[i]);
+        }
+    }
+    return caseResult;
+}
+
+function toPascalCase(words) {
+    let caseResult = '';
+    for(let i=0; i<words.length; i++) {
+        caseResult += firstLetterToUpperCase(words[i]);
+    }
+    return caseResult;
+}
+
+function toKebabCase(words) {
+    let caseResult = '';
+    for(let i=0; i<words.length; i++) {
+        if(i==0) {
+            caseResult += words[i].toLowerCase();
+        }
+        else {
+            caseResult += "-"+words[i].toLowerCase();
+        }
+    }
+    return caseResult;
+}
+
+function toSnakeCase(words) {
+    let caseResult = '';
+    for(let i=0; i<words.length; i++) {
+        if(i==0) {
+            caseResult += words[i].toLowerCase();
+        }
+        else {
+            caseResult += "_"+words[i].toLowerCase();
+        }
+    }
+    return caseResult;
+}
+
+function toConstantCase(words) {
+    let caseResult = '';
+    for(let i=0; i<words.length; i++) {
+        if(i==0) {
+            caseResult += words[i].toUpperCase();
+        }
+        else {
+            caseResult += "_"+words[i].toUpperCase();
+        }
+    }
+    return caseResult;
+}
+
+function toPathCase(words) {
+    let caseResult = '';
+    for(let i=0; i<words.length; i++) {
+        if(i==0) {
+            caseResult += firstLetterToUpperCase(words[i])
+        }
+        else {
+            caseResult += "/"+words[i].toLowerCase();
+        }
+    }
+    return caseResult;
+}
+
+function toDefault(words) {
+    return '';
+}
+
+const caseFunctions = {
+    'camelCase':toCamelCase,
+    'pascalCase':toPascalCase,
+    'kebabCase':toKebabCase,
+    'snakeCase':toSnakeCase,
+    'constantCase':toConstantCase,
+    'pathCase':toPathCase,
+    'default':toDefault
+};
+
+async function caseToFiles(streetNamesFilePath, caseFilesDirPath) {
+    try {
+        deleteAllCaseFiles(caseFilesDirPath);
+
+        const rl = readline.createInterface({
+            input: fs.createReadStream(streetNamesFilePath)
+        });
     
-}
-catch(err) {
-    console.log(err.message);
+        rl.on('line', (line) => {
+            if(!line.includes("|")) return;
+            const lineComponents = line.split("|", 2);
+            const caseName = lineComponents[0], streetName = lineComponents[1];
+            
+            const streetNameComponents = streetName.split(" ");
+            const caseFunctionToApply = caseFunctions[caseName] || caseFunctions['default'];
+    
+            const caseFilePath = `${caseFilesDirPath}${caseName}.txt`
+            fs.appendFile(caseFilePath, caseFunctionToApply(streetNameComponents)+"\n", 'utf8', function(err) {
+                if (err) throw err;
+            });
+        });
+
+        await events.once(rl, 'close');
+        
+    }
+    catch(err) {
+        Logger.error(err.message);
+    }
 }
 
 
+caseToFiles(streetNamesFilePath, caseFilesDirPath);
 
