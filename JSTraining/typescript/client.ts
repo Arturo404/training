@@ -11,7 +11,7 @@ const client = axios.create({
     baseURL: url_base
 });
 
-export async function signUp(username: string, password: string) {
+const signUp = async (username: string, password: string) => {
     try {
         const {data} = await client.post('/signup', new Credentials(username, password));
         console.log(data);
