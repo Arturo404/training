@@ -11,7 +11,7 @@ const firstLetterToUpperCase = (string) => {
     return string.charAt(0).toUpperCase()+string.slice(1).toLowerCase();
 }
 
-function deleteAllCaseFiles(caseFilesDirPath) {
+const deleteAllCaseFiles = (caseFilesDirPath) => {
     try {
         fs.readdir(caseFilesDirPath, function (err, files) {
             if (err) {
@@ -38,7 +38,7 @@ function deleteAllCaseFiles(caseFilesDirPath) {
     }
 }
 
-function toCamelCase(words) {
+const toCamelCase = (words) => {
     let caseResult = '';
     for(let i=0; i<words.length; i++) {
         if(i==0) {
@@ -51,7 +51,7 @@ function toCamelCase(words) {
     return caseResult;
 }
 
-function toPascalCase(words) {
+const toPascalCase = (words) => {
     let caseResult = '';
     for(let i=0; i<words.length; i++) {
         caseResult += firstLetterToUpperCase(words[i]);
@@ -59,7 +59,7 @@ function toPascalCase(words) {
     return caseResult;
 }
 
-function toKebabCase(words) {
+const toKebabCase = (words) => {
     let caseResult = '';
     for(let i=0; i<words.length; i++) {
         if(i==0) {
@@ -72,7 +72,7 @@ function toKebabCase(words) {
     return caseResult;
 }
 
-function toSnakeCase(words) {
+const toSnakeCase = (words) => {
     let caseResult = '';
     for(let i=0; i<words.length; i++) {
         if(i==0) {
@@ -85,7 +85,7 @@ function toSnakeCase(words) {
     return caseResult;
 }
 
-function toConstantCase(words) {
+const toConstantCase = (words) => {
     let caseResult = '';
     for(let i=0; i<words.length; i++) {
         if(i==0) {
@@ -98,7 +98,7 @@ function toConstantCase(words) {
     return caseResult;
 }
 
-function toPathCase(words) {
+const toPathCase = (words) => {
     let caseResult = '';
     for(let i=0; i<words.length; i++) {
         if(i==0) {
@@ -111,7 +111,7 @@ function toPathCase(words) {
     return caseResult;
 }
 
-function toDefault(words) {
+const toDefault = (words) => {
     return '';
 }
 
@@ -125,7 +125,7 @@ const caseFunctions = {
     'default':toDefault
 };
 
-async function caseToFiles(streetNamesFilePath, caseFilesDirPath) {
+const caseToFiles = async(streetNamesFilePath, caseFilesDirPath) => {
     try {
         deleteAllCaseFiles(caseFilesDirPath);
 
