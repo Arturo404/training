@@ -1,6 +1,6 @@
 import { getRandomInt } from './utils.js';
 
-async function returnAPromise() {
+const returnAPromise = () => {
     return new Promise( (resolve)=>{
         setTimeout(()=>{
             resolve(getRandomInt(1,10));
@@ -8,7 +8,7 @@ async function returnAPromise() {
     })
 }
 
-async function usePromise() {
+const usePromise = async () => {
     console.log(await returnAPromise());
 }
 

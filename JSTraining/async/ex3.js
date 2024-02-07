@@ -1,6 +1,6 @@
 import { sumUntilNumber } from './utils.js';
 
-async function returnAPromise(num) {
+const returnAPromise = (num) => {
     return new Promise( (resolve)=>{
         setTimeout(()=>{
             resolve(sumUntilNumber(num));
@@ -8,7 +8,7 @@ async function returnAPromise(num) {
     });
 }
 
-async function usePromise(num) {
+const usePromise = async (num) => {
     console.log(await returnAPromise(num));
 }
 

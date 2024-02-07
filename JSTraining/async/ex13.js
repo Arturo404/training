@@ -1,10 +1,10 @@
 const array_num = [3,4,2,7,1,6];
 
-function printNumber(num) {
+const printNumber = (num) => {
     return ()=>{console.log(num);};
 }
 
-function numberPromiseIntervals(array_num) {
+const numberPromiseIntervals = (array_num) => {
     let array_promises = array_num.map(async (num)=>{
         return new Promise((resolve)=>{
             const interval_id = setInterval(printNumber(num), 1.5*1000);
@@ -19,12 +19,12 @@ function numberPromiseIntervals(array_num) {
 }
 
 
-function usingThen(array_num) {
+const usingThen = (array_num) => {
     console.log("Using then: ");
     numberPromiseIntervals(array_num).then((results)=>{});
 }
 
-async function usingAwait(array_num) {
+const usingAwait = async (array_num) => {
     console.log("Using await: ");
     try {
         await numberPromiseIntervals(array_num);

@@ -1,16 +1,16 @@
-async function returnAFailedPromise() {
+const returnAFailedPromise = () => {
     return new Promise( (resolve, reject)=>{
         reject(new Error("FAILED"));
     });
 }
 
 
-function usingThen() {
+const usingThen = () => {
     console.log("Using then: ");
     returnAFailedPromise().then(result=>{console.log(result);}).catch(error=>{console.log(error.message);});
 }
 
-async function usingAwait() {
+const usingAwait = async () => {
     console.log("Using await: ");
 
     try {

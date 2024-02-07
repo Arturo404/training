@@ -1,6 +1,6 @@
 import { getRandomInt } from './utils.js';
 
-function arrayOfRandomPromises(num_promises) {
+const arrayOfRandomPromises = (num_promises) => {
     let array_promises = [];
     for(let i=0; i<num_promises; i++) {
         array_promises.push(new Promise( (resolve, reject)=>{
@@ -15,14 +15,14 @@ function arrayOfRandomPromises(num_promises) {
     return Promise.all(array_promises);
 }
 
-function usingThen(num_promises) {
+const usingThen = (num_promises) => {
     console.log("Using then: ");
     arrayOfRandomPromises(num_promises)
         .then((result)=>{console.log(result);}, (error)=>{console.log(error.message);})
         .catch((err)=>{console.log(err.message);});
 }
 
-async function usingAwait(num_promises) {
+const usingAwait = async (num_promises) => {
     console.log("Using await: ");
     try {
         console.log(await arrayOfRandomPromises(num_promises));

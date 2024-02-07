@@ -1,6 +1,6 @@
 const array_num = [5,45,9,12,56,7,14];
 
-function minByPromises(array_num) {
+const minByPromises = (array_num) => {
     let array_promises = array_num.map(async (num)=>{
         return new Promise((resolve)=>{
             setTimeout(()=>{
@@ -12,12 +12,12 @@ function minByPromises(array_num) {
     return Promise.race(array_promises)
 }
 
-function usingThen(array_num) {
+const usingThen = (array_num) => {
     console.log("Using then: ");
     minByPromises(array_num).then((result)=>{console.log(result);});
 }
 
-async function usingAwait(array_num) {
+const usingAwait = async (array_num) => {
     console.log("Using await: ");
     try {
         console.log(await minByPromises(array_num));

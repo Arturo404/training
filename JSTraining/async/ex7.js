@@ -1,6 +1,6 @@
 import { getRandomInt } from './utils.js';
 
-function returnPromiseThatReturnPromise() {
+const returnPromiseThatReturnPromise = () => {
     return new Promise((resolve)=>{
         setTimeout(()=>{
             resolve(new Promise((resolve)=>{
@@ -13,12 +13,12 @@ function returnPromiseThatReturnPromise() {
 }
 
 
-function usingThen() {
+const usingThen = () => {
     console.log("Using then: ");
     returnPromiseThatReturnPromise().then((result)=>{console.log(result);});
 }
 
-async function usingAwait() {
+const usingAwait = async () => {
     console.log("Using await: ");
     try {
         const promise = await returnPromiseThatReturnPromise();
