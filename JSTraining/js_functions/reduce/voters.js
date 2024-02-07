@@ -41,12 +41,12 @@ array_voters = [
     }
 ];
 
-function addVoter(count_voters, voter) {
+const addVoter = (count_voters, voter) => {
     const new_count = voter.voted? count_voters+1 : count_voters;
     return new_count;
 }
 
-function countVoters(array_voters) {
+const countVoters = (array_voters) => {
     const num_voters = array_voters.reduce(addVoter, 0);
     return num_voters;
 }

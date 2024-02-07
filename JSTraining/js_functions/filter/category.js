@@ -22,7 +22,7 @@ array_objects = [
 ];
 
 
-function filterCategory(array_objects, category) {
+const filterCategory = (array_objects, category) => {
     const array_filtered = array_objects.filter((object) => {
         return object.category == category;
     });

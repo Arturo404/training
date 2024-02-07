@@ -17,11 +17,11 @@ array_persons = [
     }
 ];
 
-function personToLabel(person) {
+const personToLabel = (person) => {
     return {label: `${person.name} - ${person.age} years old`};
 }
 
-function mapToLabel(array_persons) {
+const mapToLabel = (array_persons) => {
     const array_mapped = array_persons.map(personToLabel);
     return array_mapped;
 }

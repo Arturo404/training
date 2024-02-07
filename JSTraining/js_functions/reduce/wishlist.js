@@ -19,11 +19,11 @@ wishlist = [
 ];
 
 
-function addItem(total_price, item) {
+const addItem = (total_price, item) => {
     return total_price+item.price;
 }
 
-function computeBudget(wishlist) {
+const computeBudget = (wishlist) => {
     const budget = wishlist.reduce(addItem, 0);
     return budget;
 }

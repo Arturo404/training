@@ -25,12 +25,12 @@ array_products = [
     }
 ];
 
-function discount(product) {
+const discount = (product) => {
     product.price*=0.85;
     return product;
 }
 
-function SelectAndMapWithDiscount(array_products) {
+const SelectAndMapWithDiscount = (array_products) => {
     const array_mapped = array_products.filter((product)=>{return product.price>50;}).map(discount);
     return array_mapped;
 }

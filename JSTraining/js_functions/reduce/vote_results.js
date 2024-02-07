@@ -51,7 +51,7 @@ vote_results_template = {
     voters_36_55: 0
 }
 
-function updateVoteResults(current_results, voter) {
+const updateVoteResults = (current_results, voter) => {
     switch(true) {
         case voter.age >= 18 && voter.age <= 25:
             current_results.potential_voters_18_25 += 1;
@@ -71,7 +71,7 @@ function updateVoteResults(current_results, voter) {
 }
 
 
-function computeVoteResults(array_voters) {
+const computeVoteResults = (array_voters) => {
     return array_voters.reduce(updateVoteResults, vote_results_template);
 }
 

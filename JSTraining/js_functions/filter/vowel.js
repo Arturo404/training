@@ -1,6 +1,6 @@
 array_strings = ["bawdba", "bAWDPQKWOOibi", "bobo", "dqWDw", "dwdppmn", "erthj"];
 
-function containsVowel(string) {
+const containsVowel = (string) => {
     const string_lowercase = string.toLowerCase()
     for (const vowel of ["a", "e", "y", "u", "i", "o"]) {
         if(string_lowercase.includes(vowel)) return true;
@@ -8,7 +8,7 @@ function containsVowel(string) {
     return false;
 }
 
-function filterWithVowel(array_strings) {
+const filterWithVowel = (array_strings) => {
     const array_filtered = array_strings.filter(containsVowel);
     return array_filtered;
 }

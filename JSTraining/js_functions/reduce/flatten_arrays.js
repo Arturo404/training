@@ -4,11 +4,11 @@ array_arrays = [
     [4,5,6]
 ];
 
-function addArray(flat_array, array) {
+const addArray = (flat_array, array) => {
     return flat_array.concat(array);
 }
 
-function flattenArrays(array_arrays) {
+const flattenArrays = (array_arrays) => {
     const flat_array = array_arrays.reduce(addArray);
     return flat_array;
 }

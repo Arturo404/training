@@ -1,6 +1,6 @@
 array_numbers = [23,-1,234,-11,-45,66,-214,24,677];
 
-function selectPositiveAndSquare(array_numbers) {
+const selectPositiveAndSquare = (array_numbers) => {
     const array_mapped = array_numbers.filter((number)=>{
         return number > 0;
     }).map((number)=>{
