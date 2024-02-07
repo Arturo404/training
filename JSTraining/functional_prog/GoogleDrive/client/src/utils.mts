@@ -15,11 +15,11 @@ export class FileInfo implements FileInfoInt {
     }
 }
 
-export function fileInfoToFileName(fileInfo: FileInfo) {
+export const fileInfoToFileName = (fileInfo: FileInfo) => {
     return `${fileInfo.fileName}.${fileInfo.fileType}`;
 }
 
-export function isJsonString(str:string) {
+export const isJsonString = (str:string) => {
     try {
         JSON.parse(str);
     } catch (e) {

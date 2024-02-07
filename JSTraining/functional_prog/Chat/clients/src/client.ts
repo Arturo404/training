@@ -45,7 +45,6 @@ client_socket.on('message', (message: string) => {
                         color:undefined
                     }
                     client_socket.send(JSON.stringify(messageInfo));
-                    //console.log(`From me to ${client_id}: ${message}`);
                     this.displayPrompt();
                 },
             });
@@ -62,7 +61,6 @@ client_socket.on('message', (message: string) => {
                         color:undefined
                     }
                     client_socket.send(JSON.stringify(messageInfo));
-                    //console.log(`From me to all: ${message}`);
                     this.displayPrompt();
                 },
             });

@@ -12,7 +12,7 @@ export interface IdAllocation {
     client_id:number;
 };
 
-export function isJsonString(str:string) {
+export const isJsonString = (str:string) => {
     try {
         JSON.parse(str);
     } catch (e) {
@@ -33,7 +33,7 @@ export enum Color {
     YELLOW
 }
 
-export function ColorToChalk(color:Color) : ChalkInstance {
+export const ColorToChalk = (color:Color) : ChalkInstance => {
     switch(color) {
         case Color.BLUE:
             return chalk.blue;
