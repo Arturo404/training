@@ -15,7 +15,7 @@ function deleteAllCaseFiles(caseFilesDirPath) {
     try {
         fs.readdir(caseFilesDirPath, function (err, files) {
             if (err) {
-              Logger.error("Could not list the directory.", err);
+              Logger.error("Could not list the directory.");
               throw err;
             }
         
@@ -23,7 +23,7 @@ function deleteAllCaseFiles(caseFilesDirPath) {
                 if(file.includes("Case")) {
                     fs.unlink(`${caseFilesDirPath}${file}`, (err) => {
                         if (err) {
-                            Logger.error(`Could not delete file ${file}`, err);
+                            Logger.error(`Could not delete file ${file}`);
                             throw err;
                         }
                     }); 
@@ -33,8 +33,8 @@ function deleteAllCaseFiles(caseFilesDirPath) {
         });
     }
     catch(err) {
-        Logger.error(`Error erasing case files: ${err.message}`)
-        process.exit(1);
+        Logger.error(`Error erasing case files`);
+        throw err;
     }
 }
 
