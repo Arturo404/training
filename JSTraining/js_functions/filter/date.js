@@ -7,8 +7,5 @@ const isInPast = (date_string) => {
 }
 
 const filterDateInPast = (array_dates) => {
-    const array_filtered = array_dates.filter(isInPast);
-    return array_filtered;
+    return array_dates.filter(isInPast);
 }
-
-console.log(filterDateInPast(array_dates));

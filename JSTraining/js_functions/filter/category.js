@@ -23,10 +23,6 @@ array_objects = [
 
 
 const filterCategory = (array_objects, category) => {
-    const array_filtered = array_objects.filter((object) => {
-        return object.category == category;
-    });
-    return array_filtered;
+    return array_objects.filter(object => object.category == category);
 }
 
-console.log(filterCategory(array_objects, "kitchen"));

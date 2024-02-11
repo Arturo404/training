@@ -24,8 +24,5 @@ const addItem = (total_price, item) => {
 }
 
 const computeBudget = (wishlist) => {
-    const budget = wishlist.reduce(addItem, 0);
-    return budget;
+    return wishlist.reduce(addItem, 0);
 }
-
-console.log(computeBudget(wishlist));

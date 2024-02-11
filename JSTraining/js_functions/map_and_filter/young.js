@@ -18,10 +18,5 @@ array_persons = [
 ];
 
 const selectYoungAges = (array_persons) => {
-    const array_mapped = array_persons.filter((person)=>{
-        return person.age>25 && person.age<35
-    }).map((person)=>{return person.name});
-    return array_mapped;
+    return array_persons.filter(person=>person.age>25 && person.age<35).map(person=>person.name);
 }
-
-console.log(selectYoungAges(array_persons));
