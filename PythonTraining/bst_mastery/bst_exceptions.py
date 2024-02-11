@@ -3,3 +3,9 @@ class AlreadyExistException(Exception):
 
 class NotExistException(Exception):
     pass
+
+class DatabaseNotExist(Exception):
+    pass
+
+class CollectionNotExist(Exception):
+    pass

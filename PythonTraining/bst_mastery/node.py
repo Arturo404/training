@@ -1,7 +1,8 @@
 from __future__ import annotations
-from mongo_collection import bst_col
+from mongo_collection import MongoCollection
 from typing import Generator
 from side import Side
+import logging
 
 class Node:
     def __init__(self, id: float):
@@ -9,6 +10,7 @@ class Node:
         self.left = None
         self.right = None
         self.height = 0
+        self.mongo_collection: MongoCollection = None
 
 
     def deleteNode(self) -> None:
@@ -19,11 +21,7 @@ class Node:
         Returns:
             Nothing
         """
-        delete_query = { "treasure": self.id }
-        try:
-            bst_col.delete_one(delete_query)
-        except Exception as err:
-            raise err
+        self.mongo_collection.deleteNode(self.id)
 
         del(self)
 
@@ -33,6 +31,17 @@ class Node:
         right = None if not self.right else self.right.id
         return f"Node ID: {self.id}, left: {left}, right: {right}, height: {self.height}"
     
+    def search(self, treasure:float):
+        if self.id == treasure:
+            return True
+        elif treasure < self.id:
+            if not self.left: return False
+            else: return self.left.search(treasure)
+        else:
+            if not self.right: return False
+            else: return self.right.search(treasure)
+
+            
     def updateHeight(self) -> None:
         """
         Update a node's height
@@ -115,7 +124,8 @@ class Node:
             Nothing
         """
         try:
-            bst_col.insert_one(self.to_dict())
+            self.mongo_collection.addDocument(self.to_dict())
+            logging.info(f"New node with value: {self.id} added to collection")
         except Exception as err:
             raise err
 
@@ -129,15 +139,14 @@ class Node:
         Returns:
             Nothing
         """
-        myquery = { "treasure": self.id }
-        newvalues = { "$set": { "treasure": new_treasure } }
-
         try:
-            bst_col.update_one(myquery, newvalues)
+            self.mongo_collection.updateTreasure(new_treasure)
         except Exception as err:
             raise err
-
+        
+        current_treasure = self.id
         self.id = new_treasure
+        logging.info(f"Updated treasure with value:{current_treasure} to value:{new_treasure}")
         
 
     def connectAndUpdate(self, node: Node, side: Side) -> None:
@@ -152,20 +161,13 @@ class Node:
         """
         if side == Side.LEFT: self.left = node
         else: self.right = node
-
         side_key = side.value
-
         connected_treasure = None if not node else node.id
-
-        #update mongodb
-        myquery = { "treasure": self.id }
-        newvalues = { "$set": { side_key: connected_treasure } }
-
         try:
-            bst_col.update_one(myquery, newvalues)
+            self.mongo_collection.updateConnection(side_key,self.id,connected_treasure)
         except Exception as err:
             raise err
-
+        logging.info("Connected node with id:{self.id} with node with id:{connected_treasure} as its {side_key} son.")
     
     def balance_factor(self) -> int:
         """
@@ -180,6 +182,10 @@ class Node:
 
         return (left_height-right_height)
 
+
+    def isBalanced(self):
+        return abs(self.balance_factor()) < 2
+    
 
     def balance_LL(self) -> None:
         #node naming
@@ -375,12 +381,12 @@ class Node:
             if not self.right:
                 return True
             else:
-                return abs(self.balance_factor()) < 2 and self.right.validAVL()
+                return self.isBalanced() and self.right.validAVL()
         else:
             if not self.right:
-                return abs(self.balance_factor()) < 2 and self.left.validAVL()
+                return self.isBalanced() and self.left.validAVL()
             else:
-                return abs(self.balance_factor()) < 2 and self.left.validAVL() and self.right.validAVL()
+                return self.isBalanced() and self.left.validAVL() and self.right.validAVL()
 
     def valid(self) -> bool:
         """

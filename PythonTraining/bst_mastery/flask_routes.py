@@ -1,12 +1,17 @@
 from flask import Flask, request, Response, json
 from flask_api import status
-
 from bst import BST, bst_exceptions
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
+hostname = os.getenv('FLASK_HOSTNAME')
+port = os.getenv('FLASK_PORT')
+
 
 app = Flask(__name__)
 
 bst = BST()
-
 
 @app.route('/delete_all_treasures', methods=['DELETE'])
 def delete_all_treasures():
@@ -22,10 +27,12 @@ def delete_all_treasures():
 #The route should accept a variable in the following structure: {'value': X}.
 @app.post("/insert_treasure")
 def insert_treasure():
-    treasure = request.json.get('value')
     try:
+        treasure = float(request.json.get('value'))
         bst.insert(treasure)
     except bst_exceptions.AlreadyExistException as err:
+        return Response(str(err), status=status.HTTP_400_BAD_REQUEST)
+    except ValueError as err:
         return Response(str(err), status=status.HTTP_400_BAD_REQUEST)
     except Exception as err:
         return Response(str(err), status=status.HTTP_500_INTERNAL_SERVER_ERROR)
@@ -43,10 +50,12 @@ def get_treasures():
 
 @app.route('/delete_treasure', methods=['DELETE'])
 def delete_treasure():
-    treasure = request.json.get('value')
     try:
+        treasure = float(request.json.get('value'))
         bst.delete(treasure)
     except bst_exceptions.NotExistException as err:
+        return Response(str(err), status=status.HTTP_400_BAD_REQUEST)
+    except ValueError as err:
         return Response(str(err), status=status.HTTP_400_BAD_REQUEST)
     except Exception as err:
         return Response(str(err), status=status.HTTP_500_INTERNAL_SERVER_ERROR)
@@ -62,6 +71,8 @@ def search_treasure():
             return {"message":"Treasure found!"}, status.HTTP_200_OK
         else:
             return {"message":"Treasure not found"}, status.HTTP_400_BAD_REQUEST        
+    except ValueError as err:
+        return Response(str(err), status=status.HTTP_400_BAD_REQUEST)
     except Exception as err:
         return Response(str(err), status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
