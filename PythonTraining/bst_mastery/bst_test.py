@@ -3,11 +3,11 @@ import pytest
 from bst import BST, Node, bst_exceptions
 
 
-def test_createBST():
+def test_BST_create():
     bst = BST()
     assert bst.root == None
 
-def test_Insert():
+def test_insert():
     bst = BST()
     assert bst.root == None
 
@@ -24,7 +24,7 @@ def test_Insert():
         bst.insert(10)
         bst.insert(34.2)
 
-def test_Delete():
+def test_delete():
     bst = BST()
     assert bst.root == None
 
@@ -46,7 +46,7 @@ def test_Delete():
 
             
 
-def test_Search():
+def test_search():
     bst = BST()
     assert bst.root == None
 
@@ -65,7 +65,7 @@ def test_Search():
 
 
 
-def test_Traversals():
+def test_traversals():
     bst = BST()
     assert bst.root == None
 
@@ -92,7 +92,7 @@ def test_Traversals():
 
 
 
-def test_Validate():
+def test_validate():
     bst = BST()
     assert bst.validate()
 

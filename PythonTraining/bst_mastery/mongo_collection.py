@@ -37,18 +37,18 @@ class MongoCollection:
         except bst_exceptions.CollectionNotExist:
             logging.error("The desired collection doesnt't exist")
     
-    def initCollection(self):
+    def init_collection(self):
         self.bst_col.delete_many({})
         self.bst_col.insert_one({"root": None})
         logging.info("BST collection reinitialized and empty.")
 
-    def addDocument(self, document:dict):
+    def add_document(self, document:dict):
         try:
             self.bst_col.insert_one(document)
         except Exception as err:
             raise err
 
-    def updateTreasure(self, new_treasure):
+    def update_treasure(self, new_treasure):
         myquery = { "treasure": self.id }
         newvalues = { "$set": { "treasure": new_treasure } }
         try:
@@ -56,12 +56,12 @@ class MongoCollection:
         except Exception as err:
             raise err
     
-    def updateRoot(self, new_root_id: float): 
+    def update_root(self, new_root_id: float): 
         myquery = { "root" : {"$exists":True} } 
         newvalues = { "$set": { "root": new_root_id } }
         self.bst_col.update_one(myquery, newvalues)
 
-    def updateConnection(self, side:str, node_to_update_id:float, new_node_id:float):
+    def update_connection(self, side:str, node_to_update_id:float, new_node_id:float):
         myquery = { "treasure": node_to_update_id }
         newvalues = { "$set": { side: new_node_id } }
 
@@ -70,7 +70,7 @@ class MongoCollection:
         except Exception as err:
             raise err
         
-    def deleteNode(self, node_id:float):
+    def delete_node(self, node_id:float):
         delete_query = { "treasure": node_id }
         try:
             self.bst_col.delete_one(delete_query)

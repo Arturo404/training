@@ -13,7 +13,7 @@ class Node:
         self.mongo_collection: MongoCollection = None
 
 
-    def deleteNode(self) -> None:
+    def delete_node(self) -> None:
         """
         Delete a node while also deleting in from MongoDB
         Arguments:
@@ -21,7 +21,7 @@ class Node:
         Returns:
             Nothing
         """
-        self.mongo_collection.deleteNode(self.id)
+        self.mongo_collection.delete_node(self.id)
 
         del(self)
 
@@ -42,7 +42,7 @@ class Node:
             else: return self.right.search(treasure)
 
             
-    def updateHeight(self) -> None:
+    def update_height(self) -> None:
         """
         Update a node's height
         Arguments:
@@ -55,7 +55,7 @@ class Node:
         self.height = max(left_height, right_height)+1
 
 
-    def isLeaf(self) -> bool:
+    def is_leaf(self) -> bool:
         """
         Determine if a node is a leaf in its current tree
         Arguments:
@@ -65,7 +65,7 @@ class Node:
         """
         return not(self.left or self.right)
     
-    def hasOneSon(self) -> bool:
+    def has_one_son(self) -> bool:
         """
         Determine if a node has exactly one son in its current tree
         Arguments:
@@ -75,7 +75,7 @@ class Node:
         """
         return (not self.left and self.right) or (self.left and not self.right)
     
-    def findOneSon(self) -> Node:
+    def find_one_son(self) -> Node:
         """
         Find and return the only son of a node
         Arguments:
@@ -115,7 +115,7 @@ class Node:
         right_treasure = None if not self.right else self.right.id
         return {"treasure": self.id, "left": left_treasure, "right": right_treasure}
     
-    def addNodeToMongo(self) -> None:
+    def add_node_to_mongo(self) -> None:
         """
         Insert a node's information to MongoDB
         Arguments:
@@ -124,13 +124,13 @@ class Node:
             Nothing
         """
         try:
-            self.mongo_collection.addDocument(self.to_dict())
+            self.mongo_collection.add_document(self.to_dict())
             logging.info(f"New node with value: {self.id} added to collection")
         except Exception as err:
             raise err
 
 
-    def updateTreasure(self, new_treasure: float) -> None:
+    def update_treasure(self, new_treasure: float) -> None:
         """
         Update the id (treasure) of the given node while updating the change in MongoDB
         Arguments:
@@ -140,7 +140,7 @@ class Node:
             Nothing
         """
         try:
-            self.mongo_collection.updateTreasure(new_treasure)
+            self.mongo_collection.update_treasure(new_treasure)
         except Exception as err:
             raise err
         
@@ -149,7 +149,7 @@ class Node:
         logging.info(f"Updated treasure with value:{current_treasure} to value:{new_treasure}")
         
 
-    def connectAndUpdate(self, node: Node, side: Side) -> None:
+    def connect_and_update(self, node: Node, side: Side) -> None:
         """
         Connect a node to an other as its new son on the desired side
         Arguments:
@@ -164,7 +164,7 @@ class Node:
         side_key = side.value
         connected_treasure = None if not node else node.id
         try:
-            self.mongo_collection.updateConnection(side_key,self.id,connected_treasure)
+            self.mongo_collection.update_connection(side_key,self.id,connected_treasure)
         except Exception as err:
             raise err
         logging.info("Connected node with id:{self.id} with node with id:{connected_treasure} as its {side_key} son.")
@@ -183,7 +183,7 @@ class Node:
         return (left_height-right_height)
 
 
-    def isBalanced(self):
+    def is_balanced(self):
         return abs(self.balance_factor()) < 2
     
 
@@ -197,11 +197,11 @@ class Node:
         A_r = A.right
 
         #balancing and height update
-        B.connectAndUpdate(A_r, Side.LEFT)
-        B.updateHeight()
+        B.connect_and_update(A_r, Side.LEFT)
+        B.update_height()
 
-        A.connectAndUpdate(B, Side.RIGHT)
-        A.updateHeight()
+        A.connect_and_update(B, Side.RIGHT)
+        A.update_height()
 
         return A
 
@@ -219,15 +219,15 @@ class Node:
         B_r = B.right
 
         #balancing and height update
-        C.connectAndUpdate(B_r, Side.LEFT)
-        C.updateHeight()
+        C.connect_and_update(B_r, Side.LEFT)
+        C.update_height()
 
-        A.connectAndUpdate(B_l, Side.RIGHT)
-        A.updateHeight()
+        A.connect_and_update(B_l, Side.RIGHT)
+        A.update_height()
 
-        B.connectAndUpdate(A, Side.LEFT)
-        B.connectAndUpdate(C, Side.RIGHT)
-        B.updateHeight()
+        B.connect_and_update(A, Side.LEFT)
+        B.connect_and_update(C, Side.RIGHT)
+        B.update_height()
 
         return B
 
@@ -242,11 +242,11 @@ class Node:
         A_r = A.right
 
         #balancing and height update
-        B.connectAndUpdate(A_l, Side.RIGHT)
-        B.updateHeight()
+        B.connect_and_update(A_l, Side.RIGHT)
+        B.update_height()
 
-        A.connectAndUpdate(B, Side.LEFT)
-        A.updateHeight()
+        A.connect_and_update(B, Side.LEFT)
+        A.update_height()
 
         return A
 
@@ -264,15 +264,15 @@ class Node:
         B_r = B.right
 
         #balancing and height update
-        C.connectAndUpdate(B_l, Side.RIGHT)
-        C.updateHeight()
+        C.connect_and_update(B_l, Side.RIGHT)
+        C.update_height()
 
-        A.connectAndUpdate(B_r, Side.LEFT)
-        A.updateHeight()
+        A.connect_and_update(B_r, Side.LEFT)
+        A.update_height()
 
-        B.connectAndUpdate(C, Side.LEFT)
-        B.connectAndUpdate(A, Side.RIGHT)
-        B.updateHeight()
+        B.connect_and_update(C, Side.LEFT)
+        B.connect_and_update(A, Side.RIGHT)
+        B.update_height()
 
         return B
 
@@ -350,7 +350,7 @@ class Node:
             else:
                 return min(self.id, self.left.min(), self.right.min())
     
-    def validBinary(self) -> bool:
+    def valid_binary(self) -> bool:
         """
         Check if subtree is a valid BST
         Arguments:
@@ -362,14 +362,14 @@ class Node:
             if not self.right:
                 return True
             else:
-                return (self.id < self.right.min()) and self.right.validBinary()
+                return (self.id < self.right.min()) and self.right.valid_binary()
         else:
             if not self.right:
-                return (self.left.max() < self.id) and self.left.validBinary()
+                return (self.left.max() < self.id) and self.left.valid_binary()
             else:
-                return (self.id < self.right.min()) and (self.left.max() < self.id) and self.right.validBinary() and self.left.validBinary()
+                return (self.id < self.right.min()) and (self.left.max() < self.id) and self.right.valid_binary() and self.left.valid_binary()
     
-    def validAVL(self) -> bool:
+    def valid_AVL(self) -> bool:
         """
         Check if subtree is balanced according to AVL rules
         Arguments:
@@ -381,12 +381,12 @@ class Node:
             if not self.right:
                 return True
             else:
-                return self.isBalanced() and self.right.validAVL()
+                return self.is_balanced() and self.right.valid_AVL()
         else:
             if not self.right:
-                return self.isBalanced() and self.left.validAVL()
+                return self.is_balanced() and self.left.valid_AVL()
             else:
-                return self.isBalanced() and self.left.validAVL() and self.right.validAVL()
+                return self.is_balanced() and self.left.valid_AVL() and self.right.valid_AVL()
 
     def valid(self) -> bool:
         """
@@ -396,9 +396,9 @@ class Node:
         Returns:
             True - subtree is valid, False otherwise
         """
-        return self.validBinary() and self.validAVL()
+        return self.valid_binary() and self.valid_AVL()
     
-    def toJson(self) -> dict:
+    def to_json(self) -> dict:
         """
         Create a JSON representation of the given node's subtree
         Arguments:
@@ -406,6 +406,6 @@ class Node:
         Returns:
             A JSON representation of the given node's subtree
         """
-        left_json = None if not self.left else self.left.toJson()
-        right_json = None if not self.right else self.right.toJson()
+        left_json = None if not self.left else self.left.to_json()
+        right_json = None if not self.right else self.right.to_json()
         return {"treasure": self.id, "left":left_json, "right":right_json}
